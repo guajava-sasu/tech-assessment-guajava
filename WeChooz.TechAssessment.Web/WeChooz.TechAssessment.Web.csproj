@@ -25,6 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\admin\login.tsx">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\admin\index.tsx">
       <SubType>Code</SubType>
     </TypeScriptCompile>

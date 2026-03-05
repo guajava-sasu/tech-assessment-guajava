@@ -41,7 +41,7 @@ Un cours est défini par les informations suivantes :
 
 Une session est un cours donné à partir d'une date et avec un mode de délivrance (présentiel ou à distance), avec une liste de participants.
 
-Un parcipant est défini par les informations suivantes :
+Un participant est défini par les informations suivantes :
 - un nom,
 - un prénom,
 - une adresse e-mail,

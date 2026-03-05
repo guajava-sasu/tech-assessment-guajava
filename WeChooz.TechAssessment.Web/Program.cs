@@ -1,6 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc.Razor;
+using System.Security.Claims;
 using Vite.AspNetCore;
+using WeChooz.TechAssessment.Web.Authentication;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
+using WeChooz.TechAssessment.Web.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,21 +21,21 @@ builder.Services.Configure<RazorViewEngineOptions>(options =>
 {
     options.ViewLocationFormats.Add("/{1}/_Views/{0}" + RazorViewEngine.ViewExtension);
 });
-builder.Services.AddAuthentication("Cookies")
-    .AddCookie("Cookies", options =>
+
+builder.Services.AddAuthentication("Cookies").AddCookie("Cookies",
+    options =>
     {
-        options.Cookie.Name = "AspireAuthCookie";
+        options.LoginPath = "/login";
+        // options.Cookie.Name = "AspireAuthCookie";
+        // options.RequireAuthenticatedSignIn = true; // (par défaut) on ne le désactive pas
     });
+
 builder.Services.AddAuthorization(options =>
 {
-    var defaultPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
-
-    options.AddPolicy("Formation", policy => policy.Combine(defaultPolicy).RequireRole("formation"));
-    options.AddPolicy("Sales", policy => policy.Combine(defaultPolicy).RequireRole("sales"));
+    options.AddPolicy("FormationOnly", p => p.RequireRole("formation"));
+    options.AddPolicy("SalesOnly", p => p.RequireRole("sales"));
+    options.AddPolicy("FormationOrSales", p => p.RequireRole("formation", "sales"));
 });
-
 
 builder.Services.AddViteServices(options =>
 {
@@ -45,7 +51,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -57,6 +62,27 @@ app.MapStaticAssets();
 
 app.UseRouting();
 app.MapDefaultEndpoints();
+
+app.MapPost(
+    "/login", async (HttpContext context, PerformLoginRequest request) =>
+    {
+        if (request.Login != "formation" && request.Login != "sales")
+            return Results.Unauthorized();
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, request.Login),
+            new Claim(ClaimTypes.Role, request.Login)
+        };
+
+        var identity = new ClaimsIdentity(claims, "Cookies");
+        var principal = new ClaimsPrincipal(identity);
+
+        await context.SignInAsync("Cookies", principal);
+
+        return Results.Ok();
+    }
+);
 
 app.MapControllers();
 
@@ -80,12 +106,16 @@ app.MapControllerRoute(
 app.MapControllerRoute(
         name: "fallback_home_root",
         pattern: "",
-        defaults: new { controller = "Home", action = "Handle" }
+        defaults: new { controller = "Home", action = "Handle" }    
     );
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseWebSockets();
     app.UseViteDevelopmentServer(true);
 }
+
 app.Run();

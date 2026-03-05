@@ -8,6 +8,8 @@ namespace WeChooz.TechAssessment.Web.Authentication;
 public class PerformLoginEndpoint : Ardalis.ApiEndpoints.EndpointBaseAsync.WithRequest<PerformLoginRequest>
     .WithActionResult
 {
+    private const string CookieScheme = "Cookies";
+
     [HttpPost]
     public override async Task<ActionResult> HandleAsync(PerformLoginRequest request, CancellationToken cancellationToken = default)
     {
@@ -15,6 +17,7 @@ public class PerformLoginEndpoint : Ardalis.ApiEndpoints.EndpointBaseAsync.WithR
         {
             return BadRequest("Login cannot be empty.");
         }
+
         if (request.Login == "formation" || request.Login == "sales")
         {
             var claims = new List<Claim>
@@ -22,12 +25,15 @@ public class PerformLoginEndpoint : Ardalis.ApiEndpoints.EndpointBaseAsync.WithR
                 new Claim(ClaimTypes.Role, request.Login),
                 new Claim(ClaimTypes.Name, request.Login)
             };
-            var identity = new ClaimsIdentity(claims, "CustomAuth");
+
             var identity = new ClaimsIdentity(claims, CookieScheme);
             var principal = new ClaimsPrincipal(identity);
-            await HttpContext.SignInAsync(principal);
-            return Ok(principal.Claims);
+
+            await HttpContext.SignInAsync(CookieScheme, principal);
+
+            return Ok(claims.Select(c => new { type = c.Type, value = c.Value }));
         }
+
         return Unauthorized();
     }
 }

@@ -1,27 +1,17 @@
-﻿@{
-    ViewData["Title"] = "Login";
-}
+﻿@addTagHelper *, Vite.AspNetCore
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="/favicon-green.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>WeChooz - Portail Formation</title>
+    <link rel="stylesheet" vite-href="~/admin/login.tsx" />
+</head>
+<body id="app">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="react-app"></div>
+    <script type="module" vite-src="~/admin/login.tsx" asp-append-version="true"></script>
+</body>
+</html>
 
-<h1>Login</h1>
-<form id="loginForm">
-    <input type="text" name="login" placeholder="Login (formation ou sales)" required />
-    <button type="submit">Se connecter</button>
-</form>
-
-<script>
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const login = e.target.login.value;
-        const response = await fetch('/_api/admin/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ login })
-        });
-         console.log(response);
-        if (response.ok) {
-            window.location.href = '/admin';
-        } else {
-            alert('Login failed');
-        }
-    });
-</script>

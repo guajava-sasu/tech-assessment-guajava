@@ -23,6 +23,7 @@ public class PerformLoginEndpoint : Ardalis.ApiEndpoints.EndpointBaseAsync.WithR
                 new Claim(ClaimTypes.Name, request.Login)
             };
             var identity = new ClaimsIdentity(claims, "CustomAuth");
+            var identity = new ClaimsIdentity(claims, CookieScheme);
             var principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(principal);
             return Ok(principal.Claims);

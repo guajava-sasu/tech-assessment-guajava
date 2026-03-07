@@ -26,8 +26,6 @@ builder.Services.AddAuthentication("Cookies").AddCookie("Cookies",
     options =>
     {
         options.LoginPath = "/login";
-        // options.Cookie.Name = "AspireAuthCookie";
-        // options.RequireAuthenticatedSignIn = true; // (par défaut) on ne le désactive pas
     });
 
 builder.Services.AddAuthorization(options =>

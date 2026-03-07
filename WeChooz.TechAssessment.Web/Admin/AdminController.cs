@@ -16,7 +16,7 @@ public class AdminController : Controller
 
     [HttpGet("login")]
     [AllowAnonymous]
-    public ActionResult Login()
+    public IActionResult Login()
     {
         return View(); 
     }
@@ -37,10 +37,10 @@ public class AdminController : Controller
     }
 
     [Authorize(Policy = "FormationOnly")]
-    [HttpPost("/courses")]
+    [HttpPost("courses")]
     public IActionResult CreateCourse()
     {
-        return Ok("Course created");
+        return View();
     }
 
 

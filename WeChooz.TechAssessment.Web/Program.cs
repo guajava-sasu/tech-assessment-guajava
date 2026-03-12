@@ -7,6 +7,9 @@ using WeChooz.TechAssessment.Web.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using WeChooz.TechAssessment.Web.Data;
+using Microsoft.EntityFrameworkCore;
+using WeChooz.TechAssessment.Web.Data;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,7 +47,15 @@ builder.Services.AddViteServices(options =>
     options.Manifest = "vite.manifest.json";
 });
 
+builder.Services.AddDbContext<TechAssessmentDbContext>(options =>
+    options.UseSqlServer(sqlServerConnectionString));
+
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<TechAssessmentDbContext>();
+}
+
 
 if (!app.Environment.IsDevelopment())
 {
@@ -81,6 +92,10 @@ app.MapPost(
         return Results.Ok();
     }
 );
+app.MapGet("/formations", () => Results.Redirect("/_api/formations"));
+app.MapGet("/create-cours", () => Results.Redirect("/_api/create/cours"));
+app.MapGet("/create-session", () => Results.Redirect("/_api/create/session"));
+app.MapGet("/create-participant", () => Results.Redirect("/_api/create/participant"));
 
 app.MapControllers();
 
@@ -103,8 +118,8 @@ app.MapControllerRoute(
 );
 app.MapControllerRoute(
         name: "fallback_home_root",
-        pattern: "",
-        defaults: new { controller = "Home", action = "Handle" }    
+        pattern: "/",
+        defaults: new { controller = "Home", action = "Handle" }
     );
 
 app.UseAuthentication();

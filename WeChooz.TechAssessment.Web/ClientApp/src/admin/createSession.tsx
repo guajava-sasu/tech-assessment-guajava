@@ -6,7 +6,7 @@ const root = ReactDOM.createRoot(document.getElementById("react-app") as Contain
 root.render(
 
     <div>
-        <h1>Hello admin Creata Course</h1>
+        <h1>Hello admin Creata Session</h1>
 
 
 

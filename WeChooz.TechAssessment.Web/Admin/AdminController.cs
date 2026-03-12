@@ -21,6 +21,21 @@ public class AdminController : Controller
         return View(); 
     }
 
+    [HttpGet("session")]
+    [AllowAnonymous]
+    public IActionResult Session()
+    {
+        return View();
+    }
+
+
+    [HttpGet("cours")]
+    [AllowAnonymous]
+    public IActionResult Cours()
+    {
+        return View();
+    }
+
     [Authorize(Policy = "FormationOrSales")]
     
     [HttpPost("/participants")]

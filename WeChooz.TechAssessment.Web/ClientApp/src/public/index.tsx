@@ -2,30 +2,19 @@
 import * as ReactDOM from "react-dom/client";
 import { useEffect, useState } from "react";
 
-type FormationDto = {
-    id: number;
-    nom: string;
-    descriptionCourte: string;
-    dureeEnJours: number;
-    populationCible: string[];
-    capaciteMaximale: number;
-    formateurNom: string;
-    formateurPrenom: string;
-    dateCreation: string; // ISO
-};
-
 type CoursRow = {
+    id?: number;
     nom: string;
     descriptionCourte: string;
     populationCible: string[];
-    delivrance: { id: number, libelle: string }[];
+    deliveryMode: { id: number, libelle: string };
     cible: { id: number, libelle: string }[];
     dateDebut: string;
     duree: string;
     placesRestantes: number;
     formateur: string;
 };
-
+ 
 const fallbackCours: CoursRow[] = [];
 
 const toFrDate = (iso: string) => {
@@ -56,16 +45,16 @@ const PublicPage = () => {
                 const res = await fetch("/_api/formations", { signal: controller.signal });
                 if (!res.ok) return;
 
-                const cours = (await res.json()) as FormationDto[];
+                const cours = (await res.json()) as CoursRow[];
+                //console.log("------------------------------------------cours");
+                //console.log(cours[0]);
 
-                console.log(cours);
-
-                const mapped: CoursRow[] = cours.map((cour) => ({
+                const mapped: CoursRow[] = cours.map((cour:any) => ({
                     nom: cour.nom,
                     descriptionCourte: cour.descriptionCourte,
-                    populationCible: [cour.populationCible.map(pc => pc.libelle)],
+                    populationCible: cour.populationCible.map((pc: any) => pc.libelle),
                     cible: cour.populationCible,
-                    delivrance: cour.delivrance,
+                    deliveryMode: cour.modeDelivrance,
                     dateDebut: toFrDate(cour.dateCreation),
                     duree: `${cour.dureeEnJours} jours`,
                     placesRestantes: cour.capaciteMaximale,
@@ -77,7 +66,7 @@ const PublicPage = () => {
                 setSessions(mapped);
                 setFilteredSessions(mapped);
             } catch {
-                // On garde fallbackCours si l'API n'est pas dispo
+
             }
         })();
 
@@ -108,10 +97,10 @@ const PublicPage = () => {
             // ici mode contient population cible, il faut rechercher la correspondance dans le tableau de population cible
             const populationCibleComparison =
                 tmp.populationCible.length > 0
-                    ? session.mode.filter((m) =>  m.id === Number(tmp.populationCible)).length > 0 : true;
+                    ? session.cible.filter((m) =>  m.id === Number(tmp.populationCible)).length > 0 : true;
 
             const deliveryModeComparison =
-                tmp.deliveryMode.length > 0 ? session.mode.filter((m) =>  m.id === Number(tmp.deliveryMode)) : true;
+                tmp.deliveryMode.length > 0 ? session.deliveryMode.id === Number(tmp.deliveryMode) : true;
 
             const dateComparison =
                 tmp.selectedDate.length > 0
@@ -171,7 +160,7 @@ const PublicPage = () => {
                             <th>Population cible</th>
                             <th>Date de début</th>
                             <th>Durée</th>
-                            {/*<th>Mode</th>*/}
+                            <th>Mode</th>
                             <th>Places restantes</th>
                             <th>Formateur</th>
                         </tr>
@@ -184,7 +173,7 @@ const PublicPage = () => {
                                 <td>{session.populationCible.join(", ")}</td>
                                 <td>{session.dateDebut}</td>
                                 <td>{session.duree}</td>
-
+                                <td>{session.deliveryMode.libelle}</td>
                                 <td>{session.placesRestantes}</td>
                                 <td>{session.formateur}</td>
                             </tr>

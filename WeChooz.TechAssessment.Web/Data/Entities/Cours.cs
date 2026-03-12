@@ -27,6 +27,11 @@ namespace WeChooz.TechAssessment.Web.Data
 
         public ICollection<CoursPopulationCible> CoursPopulationCibles { get; set; } = new List<CoursPopulationCible>();
 
+
+        [ForeignKey("ModeDelivrance")]
+        public int IdModeDelivrance { get; set; }
+        public ModeDelivrance ModeDelivrance { get; set; }
+
         [Required]
         public int CapaciteMaximale { get; set; }
 

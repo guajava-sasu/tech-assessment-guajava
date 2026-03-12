@@ -12,7 +12,7 @@ namespace WeChooz.TechAssessment.Web.Data
         [Required]
         [StringLength(50)]
         public string Libelle { get; set; }
-
+        public ICollection<Cours> Cours { get; set; } = new List<Cours>();
         public ICollection<Session> Sessions { get; set; } = new List<Session>();
     }
 }

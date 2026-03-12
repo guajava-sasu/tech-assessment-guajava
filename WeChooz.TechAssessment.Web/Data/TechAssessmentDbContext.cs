@@ -39,7 +39,8 @@ namespace WeChooz.TechAssessment.Web.Data
                 e.Property(x => x.DescriptionLongueMarkdown).IsRequired();
 
                 e.Property(x => x.DateCreation).HasDefaultValueSql("GETDATE()");
-
+                e.HasOne(x => x.ModeDelivrance).WithMany(x=>x.Cours).HasForeignKey(x => x.IdModeDelivrance)
+                    .OnDelete(DeleteBehavior.NoAction);
                 e.HasOne(x => x.Formateur)
                     .WithMany(x => x.Cours)
                     .HasForeignKey(x => x.IdFormateur)

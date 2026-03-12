@@ -11,6 +11,7 @@ namespace WeChooz.TechAssessment.Web.Dtos
         List<PopulationCibleDto> PopulationCible,
         int CapaciteMaximale,
         FormateurDto Formateur,
+        ModeDelivranceDto ModeDelivrance,
         DateTime DateCreation
     );
 }

@@ -18,9 +18,11 @@ BEGIN
         DescriptionLongueMarkdown NVARCHAR(MAX) NOT NULL,
         DureeEnJours INT NOT NULL,
         CapaciteMaximale INT NOT NULL,
+        IdModeDelivrance INT NOT NULL,
         IdFormateur INT,
         DateCreation DATETIME DEFAULT GETDATE(),
-        FOREIGN KEY (IdFormateur) REFERENCES Formateurs(Id)
+        FOREIGN KEY (IdFormateur) REFERENCES Formateurs(Id),
+        FOREIGN KEY (IdModeDelivrance) REFERENCES ModeDelivrance(Id)
     );
 END;
 

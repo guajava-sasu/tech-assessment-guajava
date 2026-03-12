@@ -25,6 +25,10 @@ public static class CoursMapping
                 c.Formateur.Nom,
                 c.Formateur.Prenom
             ),
+            new ModeDelivranceDto(
+                c.ModeDelivrance.Id,
+                c.ModeDelivrance.Libelle
+            ),
             c.DateCreation
         ));
 }
